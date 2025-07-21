@@ -11,12 +11,11 @@ const loading = document.querySelector('.loader');
 
 form.addEventListener('submit', submitHandler);
 
-async function submitHandler(event) {
+function submitHandler(event) {
   event.preventDefault();
-
   const keyWord = event.target.elements.formInput.value.trim();
-  gallery.innerHTML = '';
   loading.classList.remove('visually-hidden');
+  gallery.innerHTML = '';
 
   if (!keyWord) {
     iziToast.show({
@@ -28,43 +27,45 @@ async function submitHandler(event) {
     return;
   }
 
-  try {
-    const response = await axios.get('https://pixabay.com/api/', {
+  axios
+    .get('https://pixabay.com/api/', {
       params: {
         key: '47396340-f7005e76dc1b3bde31bf703a9',
-        q: keyWord,
+        q: keyWord.trim(),
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: true,
         per_page: 40,
       },
+    })
+    .then(response => {
+      const images = response.data.hits;
+      if (!images.length) {
+        throw new Error(
+          'Sorry, there are no images matching <br /> your search query. Please try again!'
+        );
+      }
+
+      const markUp = images.map(item => createMarkUp(item)).join('');
+      gallery.innerHTML = markUp;
+
+      const lightbox = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionPosition: 'bottom',
+        captionDelay: 250,
+      });
+      lightbox.refresh();
+    })
+    .catch(error => {
+      iziToast.show({
+        message: error.message,
+        backgroundColor: '#ef4040',
+        position: 'topRight',
+      });
+    })
+    .finally(() => {
+      loading.classList.add('visually-hidden');
     });
 
-    const images = response.data.hits;
-
-    if (!images.length) {
-      throw new Error(
-        'Sorry, there are no images matching your search query. Please try again!'
-      );
-    }
-
-    const markUp = images.map(item => createMarkUp(item)).join('');
-    gallery.innerHTML = markUp;
-
-    const lightbox = new SimpleLightbox('.gallery a', {
-      captionsData: 'alt',
-      captionPosition: 'bottom',
-      captionDelay: 250,
-    });
-    lightbox.refresh();
-  } catch (error) {
-    iziToast.show({
-      message: error.message,
-      backgroundColor: '#ef4040',
-      position: 'topRight',
-    });
-  } finally {
-    loading.classList.add('visually-hidden');
-    event.target.reset();
-  }
+  event.target.reset();
 }
