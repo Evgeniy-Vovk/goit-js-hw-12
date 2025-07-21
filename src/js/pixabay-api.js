@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default async function getApi(keyWord) {
-  const apiKey = '32946561-6d99391fd6ee776d2dee61275';
+  const apiKey = '47396340-f7005e76dc1b3bde31bf703a9';
   const baseUrl = 'https://pixabay.com/api/';
 
   try {
