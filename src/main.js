@@ -1,6 +1,6 @@
-import getApi from './js/pixabay-api';
+import axios from 'axios';
 import iziToast from 'izitoast';
-import createMarkUp from './js/render-functions';
+import createMarkUp from './js/render-functions.js';
 import SimpleLightbox from 'simplelightbox';
 import 'izitoast/dist/css/iziToast.min.css';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -13,7 +13,7 @@ form.addEventListener('submit', submitHandler);
 
 function submitHandler(event) {
   event.preventDefault();
-  const keyWord = event.target.elements.formInput.value;
+  const keyWord = event.target.elements.formInput.value.trim();
   loading.classList.remove('visually-hidden');
   gallery.innerHTML = '';
 
@@ -27,25 +27,32 @@ function submitHandler(event) {
     return;
   }
 
-  getApi(keyWord)
-    .then(images => {
+  axios
+    .get('https://pixabay.com/api/', {
+      params: {
+        key: '47396340-f7005e76dc1b3bde31bf703a9',
+        q: keyWord.trim(),
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: true,
+        per_page: 40,
+      },
+    })
+    .then(response => {
+      const images = response.data.hits;
       if (!images.length) {
         throw new Error(
           'Sorry, there are no images matching <br /> your search query. Please try again!'
         );
       }
-      const markUp = images
-        .map(item => {
-          return createMarkUp(item);
-        })
-        .join('');
 
+      const markUp = images.map(item => createMarkUp(item)).join('');
       gallery.innerHTML = markUp;
 
       const lightbox = new SimpleLightbox('.gallery a', {
-        captionSelector: 'img',
         captionsData: 'alt',
         captionPosition: 'bottom',
+        captionDelay: 250,
       });
       lightbox.refresh();
     })
