@@ -1,71 +1,61 @@
-import axios from 'axios';
+import { getImagesByQuery } from './js/pixabay-api.js';
+import {
+  createGallery,
+  clearGallery,
+  showLoader,
+  hideLoader,
+} from './js/render-functions.js';
 import iziToast from 'izitoast';
-import createMarkUp from './js/render-functions.js';
-import SimpleLightbox from 'simplelightbox';
 import 'izitoast/dist/css/iziToast.min.css';
-import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const form = document.querySelector('.form');
-const gallery = document.querySelector('.gallery');
-const loading = document.querySelector('.loader');
+const myForm = document.querySelector('.form');
 
-form.addEventListener('submit', submitHandler);
+const searchImage = document.querySelector('input[name="search-text"]');
 
-function submitHandler(event) {
+myForm.addEventListener('submit', onSubmit);
+async function onSubmit(event) {
   event.preventDefault();
-  const keyWord = event.target.elements.formInput.value.trim();
-  loading.classList.remove('visually-hidden');
-  gallery.innerHTML = '';
-
-  if (!keyWord) {
-    iziToast.show({
-      message: 'Please enter a search term.',
-      backgroundColor: '#ef4040',
+  const myQuery = searchImage.value.trim();
+  if (myQuery === '') {
+    myForm.reset();
+    iziToast.error({
+      title: 'Error',
+      message: 'Search field cannot be empty!',
       position: 'topRight',
     });
-    loading.classList.add('visually-hidden');
     return;
   }
+  clearGallery();
+  showLoader();
 
-  axios
-    .get('https://pixabay.com/api/', {
-      params: {
-        key: '47396340-f7005e76dc1b3bde31bf703a9',
-        q: keyWord.trim(),
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-        per_page: 40,
-      },
-    })
-    .then(response => {
-      const images = response.data.hits;
-      if (!images.length) {
-        throw new Error(
-          'Sorry, there are no images matching <br /> your search query. Please try again!'
-        );
-      }
+  try {
+    const myData = await getImagesByQuery(myQuery);
 
-      const markUp = images.map(item => createMarkUp(item)).join('');
-      gallery.innerHTML = markUp;
-
-      const lightbox = new SimpleLightbox('.gallery a', {
-        captionsData: 'alt',
-        captionPosition: 'bottom',
-        captionDelay: 250,
-      });
-      lightbox.refresh();
-    })
-    .catch(error => {
-      iziToast.show({
-        message: error.message,
-        backgroundColor: '#ef4040',
+    if (myData.hits.length === 0) {
+      iziToast.info({
+        message:
+          '❌ Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
+        icon: false,
+        close: false,
+        backgroundColor: '#ef4040',
+        maxWidth: '432px',
+        minHeight: '88px',
+        html: true,
       });
-    })
-    .finally(() => {
-      loading.classList.add('visually-hidden');
+    } else {
+      createGallery(myData.hits);
+    }
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message:
+        error.message ||
+        'An error occurred while fetching images. Please try again later.',
+      position: 'topRight',
     });
-
-  event.target.reset();
+  } finally {
+    hideLoader();
+    myForm.reset();
+  }
 }
