@@ -50,7 +50,6 @@ function submitHandler(event) {
       lightbox.refresh();
     })
     .catch(error => {
-      //iziToast
       iziToast.show({
         message: error.message,
         backgroundColor: '#ef4040',
