@@ -60,5 +60,3 @@ export function hideLoader() {
   const myLoader = document.querySelector('.loader');
   myLoader.classList.add('visuallyhidden');
 }
-
-console.log('mygallery', myGallery);
