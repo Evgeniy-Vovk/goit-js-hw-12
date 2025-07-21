@@ -36,7 +36,7 @@ button {
   align-items: center;
   padding: 16px;
 }
-/* HTML: <div class="loader"></div> */
+
 .loader {
   --s: 25px;
   --_d: calc(0.353 * var(--s));
@@ -79,7 +79,6 @@ button {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
-  /* max-width: 1128px; */
 }
 
 .gallery-item {
