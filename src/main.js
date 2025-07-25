@@ -8,16 +8,15 @@ import {
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-const myForm = document.querySelector('.form');
+const searchForm = document.querySelector('.form');
+const searchInput = searchForm.elements['search-text'];
 
-const searchImage = document.querySelector('input[name="search-text"]');
-
-myForm.addEventListener('submit', onSubmit);
-async function onSubmit(event) {
+searchForm.addEventListener('submit', async event => {
   event.preventDefault();
-  const myQuery = searchImage.value.trim();
-  if (myQuery === '') {
-    myForm.reset();
+
+  const query = searchInput.value.trim();
+
+  if (query === '') {
     iziToast.error({
       title: 'Error',
       message: 'Search field cannot be empty!',
@@ -25,13 +24,13 @@ async function onSubmit(event) {
     });
     return;
   }
+
   clearGallery();
-  showLoader();
 
   try {
-    const myData = await getImagesByQuery(myQuery);
+    const data = await getImagesByQuery(query);
 
-    if (myData.hits.length === 0) {
+    if (data.hits.length === 0) {
       iziToast.info({
         message:
           '❌ Sorry, there are no images matching your search query. Please try again!',
@@ -44,7 +43,7 @@ async function onSubmit(event) {
         html: true,
       });
     } else {
-      createGallery(myData.hits);
+      createGallery(data.hits);
     }
   } catch (error) {
     iziToast.error({
@@ -56,6 +55,6 @@ async function onSubmit(event) {
     });
   } finally {
     hideLoader();
-    myForm.reset();
+    searchForm.reset();
   }
-}
+});

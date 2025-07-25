@@ -1,62 +1,74 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-const myGallery = document.querySelector('.gallery');
+
+let lightbox = null;
 
 export function createGallery(images) {
-  function galleryItemInsertion({
-    webformatURL,
-    largeImageURL,
-    tags,
-    likes,
-    views,
-    comments,
-    downloads,
-  }) {
-    return `<li class="gallery-item">
-        <div class="gallery-item-container">
-          <a class="gallery-link" href="${largeImageURL}">
-            <img class="gallery-image" src="${webformatURL}" alt="${tags}"
-          /></a>
-          <div class="image-info">
-            <div class="image-info-container">
-              <b>Likes</b>
-              <p>${likes}</p>
-              </div>
-            <div class="image-info-container">
-              <b>Views</b>
-              <p>${views}</p>
-                </div>
-            <div class="image-info-container">
-              <b>Comments</b>
-              <p>${comments}</p>
-                </div>
-            <div class="image-info-container">
-              <b>Downloads</b>
-              <p>${downloads}</p>
-                </div>
-          </div>
-        </div>
-        </li>`;
+  const galleryContainer = document.querySelector('.gallery');
+  if (!galleryContainer) {
+    console.error('Gallery container not found.');
+    return;
   }
-  const newGallerySyntax = images.map(galleryItemInsertion).join('');
-  myGallery.insertAdjacentHTML('beforeend', newGallerySyntax);
 
-  const myLightbox = new SimpleLightbox('.gallery-link', {
-    captionsData: 'alt',
-    captionDelay: 250,
-    captionPosition: 'bottom',
-  });
-  myLightbox.refresh();
+  const galleryMarkup = images
+    .map(
+      ({
+        largeImageURL,
+        webformatURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `
+        <li class="gallery-item">
+          <a class="gallery-link" href="${largeImageURL}">
+            <img class="gallery-image" src="${webformatURL}" alt="${tags}" />
+          </a>
+          <div class="image-info">
+            <div class="info-item"><b>Likes</b><p>${likes}</p></div>
+            <div class="info-item"><b>Views</b><p>${views}</p></div>
+            <div class="info-item"><b>Comments</b><p>${comments}</p></div>
+            <div class="info-item"><b>Downloads</b><p>${downloads}</p></div>
+          </div>
+        </li>`
+    )
+    .join('');
+
+  galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
+
+  if (!lightbox) {
+    lightbox = new SimpleLightbox('.gallery a', {
+      captionsData: 'alt',
+      captionDelay: 250,
+    });
+  } else {
+    lightbox.refresh();
+  }
 }
 
 export function clearGallery() {
-  myGallery.innerHTML = '';
+  const galleryContainer = document.querySelector('.gallery');
+  if (galleryContainer) {
+    galleryContainer.innerHTML = '';
+  }
+
+  if (lightbox) {
+    lightbox.destroy();
+    lightbox = null;
+  }
 }
+
 export function showLoader() {
-  const myLoader = document.querySelector('.loader');
-  myLoader.classList.remove('visuallyhidden');
+  const loader = document.querySelector('.loader');
+  if (loader) {
+    loader.classList.add('is-visible');
+  }
 }
+
 export function hideLoader() {
-  const myLoader = document.querySelector('.loader');
-  myLoader.classList.add('visuallyhidden');
+  const loader = document.querySelector('.loader');
+  if (loader) {
+    loader.classList.remove('is-visible');
+  }
 }
