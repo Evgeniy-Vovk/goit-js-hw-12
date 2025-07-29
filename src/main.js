@@ -93,6 +93,7 @@ searchForm.addEventListener('submit', async event => {
     });
   } finally {
     hideLoader();
+    searchForm.reset();
   }
 });
 

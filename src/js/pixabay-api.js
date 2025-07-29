@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const forbiddenTags = ['tank', 'war', 'danger', 'military', 'army', 'battle'];
+const forbiddenTags = [
+  'soldier',
+  'war',
+  'danger',
+  'military',
+  'army',
+  'battle',
+  'fair',
+];
 
 export async function getImagesByQuery(query, page = 1) {
   const API_KEY = '47396340-f7005e76dc1b3bde31bf703a9';
