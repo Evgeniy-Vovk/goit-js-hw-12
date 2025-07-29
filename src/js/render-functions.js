@@ -15,31 +15,39 @@ export function createGallery(images) {
 
   const galleryMarkup = images
     .map(
-      image => `
-        <li class="gallery-item">
-            <a href="${image.largeImageURL}">
-                <img class="gallery-image" src="${image.webformatURL}" alt="${image.tags}">
-                <div class="image-info">
-                    <div class="info-item">
-                        <b>Likes</b>
-                        <p>${image.likes}</p>
-                    </div>
-                    <div class="info-item">
-                        <b>Views</b>
-                        <p>${image.views}</p>
-                    </div>
-                    <div class="info-item">
-                        <b>Comments</b>
-                        <p>${image.comments}</p>
-                    </div>
-                    <div class="info-item">
-                        <b>Downloads</b>
-                        <p>${image.downloads}</p>
-                    </div>
-                </div>
-            </a>
-        </li>
-    `
+      ({
+        largeImageURL,
+        webformatURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `
+    <li class="gallery-item">
+      <a href="${largeImageURL}">
+        <img class="gallery-image" src="${webformatURL}" alt="${tags}">
+        <div class="image-info">
+          <div class="info-item">
+            <b>Likes</b>
+            <p>${likes}</p>
+          </div>
+          <div class="info-item">
+            <b>Views</b>
+            <p>${views}</p>
+          </div>
+          <div class="info-item">
+            <b>Comments</b>
+            <p>${comments}</p>
+          </div>
+          <div class="info-item">
+            <b>Downloads</b>
+            <p>${downloads}</p>
+          </div>
+        </div>
+      </a>
+    </li>
+  `
     )
     .join('');
 
