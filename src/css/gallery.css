@@ -3,8 +3,7 @@
   gap: 8px;
   margin-bottom: 24px;
   padding: 10px;
-
-  border-radius: 8px;
+  background-color: #fff;
 }
 
 .form input {
@@ -75,7 +74,6 @@
 
 .gallery-item {
   border: 1px solid #808080;
-
   overflow: hidden;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -137,31 +135,43 @@
 }
 
 .loader {
-  width: 48px;
-  height: 48px;
-  border: 5px solid #4e75ff;
-  border-bottom-color: #ff3d00;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.loader-text {
+  font-weight: 400;
+  color: #2e2f42;
+}
+
+.loader.hidden {
   display: none;
 }
 
-.loader.is-visible {
-  display: inline-block;
+.load-more-button {
+  padding: 10px 20px;
+  background-color: #4e75ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.load-more-button:hover {
+  background-color: #6c8cff;
+}
+
+.load-more-button.hidden {
+  display: none;
 }
